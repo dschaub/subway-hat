@@ -15,9 +15,9 @@ class DisplayManager
     planner = TrainDisplayPlanner.new
 
     times.sort.each do |t|
-      remaining = t - now
+      remaining = ((t - now) / 60).round
       next if remaining < 0
-      planner.add_arrival_in((remaining / 60).round)
+      planner.add_arrival_in(remaining)
     end
 
     show_grid(planner.to_grid)
@@ -46,12 +46,15 @@ class DisplayManager
     def initialize
       @x = 0
       @y = 0
+      @showing_minutes = 0
       @train_pixels = []
     end
 
     def add_arrival_in(minutes)
+      relative_arrival = minutes - @showing_minutes
       @train_pixels << WHITE
-      minutes.times { @train_pixels << RED }
+      relative_arrival.times { @train_pixels << RED } if relative_arrival > 0
+      @showing_minutes += relative_arrival
     end
 
     def to_grid
