@@ -26,9 +26,9 @@ class DisplayManager
   def show_grid(grid)
     display.clear(false)
 
-    grid.each_with_index do |row, i|
-      row.each_with_index do |color, j|
-        display[i, j] = color
+    grid.each_with_index do |row, y|
+      row.each_with_index do |color, x|
+        display[x, y] = color
       end
     end
 
@@ -60,8 +60,8 @@ class DisplayManager
     def to_grid
       0.upto(ROWS * COLS - 1).reduce([]) do |memo, i|
         color = @train_pixels[i]
-        row = i % COLS
-        col = i / COLS
+        col = i % COLS
+        row = i / COLS
 
         memo[row] = [] unless memo[row]
         memo[row][col] = color || OFF
