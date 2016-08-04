@@ -62,6 +62,7 @@ class DisplayManager
         color = @train_pixels[i]
         col = i % COLS
         row = i / COLS
+        col = COLS - 1 - col if row % 2 == 1
 
         memo[row] = [] unless memo[row]
         memo[row][col] = color || OFF
