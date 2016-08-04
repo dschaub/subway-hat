@@ -9,6 +9,15 @@ class ArrivalTimeFinder
     upcoming_stop_time_updates.first(n).map { |u| Time.at(u.arrival.time) }
   end
 
+  def arrivals_within(minutes, now = nil)
+    now ||= Time.now
+    window_end = now + (minutes * 60)
+
+    upcoming_stop_time_updates
+      .map    { |u| Time.at(u.arrival.time) }
+      .select { |t| t <= window_end }
+  end
+
   private
 
   def upcoming_stop_time_updates

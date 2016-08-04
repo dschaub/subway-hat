@@ -85,7 +85,7 @@ if __FILE__ == $0
       now = Time.now
 
       begin
-        manager.show_times(finder.next_arrival_time(3), now)
+        manager.show_times(finder.arrivals_within(30, now), now)
       rescue Exception => e
         puts "Failed to fetch feed at #{now}"
         # TODO: show bad state on display
