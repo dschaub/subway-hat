@@ -35,6 +35,10 @@ class FeedFetcher
 
   def _fetch
     Transit_realtime::FeedMessage.decode(Net::HTTP.get(api_uri))
+  rescue => e
+    puts "Exception caught while fetching/parsing MTA data"
+    puts e.inspect
+    raise FetchException
   end
 
   def api_uri
@@ -59,4 +63,7 @@ class FeedFetcher
       !expires_at || Time.now > expires_at
     end
   end
+end
+
+class FetchException < StandardError
 end

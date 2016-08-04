@@ -35,6 +35,16 @@ class DisplayManager
     display.show
   end
 
+  def show_error
+    display.clear(false)
+    color = Ws2812::Color.new(0, 0, 0x66)
+    display[0, 0] = color
+    display[0, 7] = color
+    display[7, 0] = color
+    display[7, 7] = color
+    display.show
+  end
+
   class TrainDisplayPlanner
     ROWS = 8
     COLS = 8
@@ -86,12 +96,8 @@ if __FILE__ == $0
 
       begin
         manager.show_times(finder.arrivals_within(30, now), now)
-      rescue Exception => e
-        puts "Failed to fetch feed at #{now}"
-        # TODO: show bad state on display
-        manager.clear
-
-        raise e
+      rescue FetchException
+        manager.show_error
       end
 
       sleep 30
