@@ -52,8 +52,8 @@ class DisplayManager
 
     def add_arrival_in(minutes)
       relative_arrival = minutes - @showing_minutes
-      @train_pixels << WHITE
       relative_arrival.times { @train_pixels << RED } if relative_arrival > 0
+      @train_pixels << WHITE
       @showing_minutes += relative_arrival
     end
 
