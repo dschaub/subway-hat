@@ -38,6 +38,7 @@ class FeedFetcher
   end
 
   def api_uri
+    raise 'No API key found' unless ENV['MTA_API_KEY']
     @api_uri ||= URI("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_API_KEY']}&feed_id=1")
   end
 

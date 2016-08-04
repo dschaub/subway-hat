@@ -8,7 +8,7 @@ class DisplayManager
   def initialize(options = {})
     @display = Ws2812::UnicornHAT.new
     @display.rotation = options.delete(:rotation) || 180
-    @display.brightness = options.delete(:brightness) || 20
+    @display.brightness = options.delete(:brightness) || 10
   end
 
   def show_times(times, now)
@@ -26,9 +26,9 @@ class DisplayManager
   def show_grid(grid)
     display.clear(false)
 
-    grid.each do |row|
-      row.each do |col|
-        display[col, row] = row[col]
+    grid.each_with_index do |row, i|
+      row.each_with_index do |color, j|
+        display[i, j] = color
       end
     end
 
@@ -41,6 +41,7 @@ class DisplayManager
 
     RED = Ws2812::Color.new(0xEE, 0x35, 0x2E)
     WHITE = Ws2812::Color.new(0xFF, 0xFF, 0xFF)
+    OFF = Ws2812::Color.new(0, 0, 0)
 
     def initialize
       @x = 0
@@ -60,7 +61,7 @@ class DisplayManager
         col = i / COLS
 
         memo[row] = [] unless memo[row]
-        memo[row][col] = color
+        memo[row][col] = color || OFF
 
         memo
       end
@@ -80,11 +81,13 @@ if __FILE__ == $0
       now = Time.now
 
       begin
-        manager.show_times(finder.next_arrival_time(3))
-      rescue
+        manager.show_times(finder.next_arrival_time(3), now)
+      rescue Exception => e
         puts "Failed to fetch feed at #{now}"
         # TODO: show bad state on display
         manager.clear
+
+        raise e
       end
 
       sleep 30
