@@ -20,7 +20,7 @@ class DisplayManager
       planner.add_arrival_in((remaining / 60).round)
     end
 
-    show_grid(planner.grid)
+    show_grid(planner.to_grid)
   end
 
   def show_grid(grid)
@@ -53,14 +53,14 @@ class DisplayManager
       minutes.times { @train_pixels << RED }
     end
 
-    def grid
+    def to_grid
       0.upto(ROWS * COLS - 1).reduce([]) do |memo, i|
         color = @train_pixels[i]
-        x = i % COLS
-        y = i / COLS
+        row = i % COLS
+        col = i / COLS
 
-        memo[y] = [] unless memo[y]
-        memo[y][x] = color
+        memo[row] = [] unless memo[row]
+        memo[row][col] = color
 
         memo
       end
@@ -69,6 +69,7 @@ class DisplayManager
 end
 
 if __FILE__ == $0
+  # TODO: make this a station ID so we can show uptown/downtown
   stop_id = ARGV[0]
   finder = ArrivalTimeFinder.new(stop_id)
 
