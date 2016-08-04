@@ -1,23 +1,10 @@
 require './arrival_time_finder'
 require './display_manager'
-
-require 'optparse'
-
-options = {}
-OptionParser.new do |config|
-  config.banner = "Usage: clock.rb -s STOP_ID [-t]"
-
-  # TODO: add station ID and show north/south
-  config.on('-s', '--stop STOP', 'Stop ID') do |stop|
-    options[:stop_id] = stop
-  end
-
-  config.on('-t', '--test', 'Test mode') do |test|
-    options[:test] = test
-  end
-end.parse!
+require './options'
 
 if __FILE__ == $0
+  options = Options.new(ARGV).parse!
+
   finder = ArrivalTimeFinder.new(options[:stop_id])
   manager = DisplayManager.new(test: options[:test])
 
