@@ -2,6 +2,10 @@
 
 I bought a Raspberry Pi 3 and a [Unicorn HAT](https://shop.pimoroni.com/products/unicorn-hat) and made a subway timer out of it.
 
+<img src="http://danschaub.com/img/subway-hat-demo.jpg" width="400">
+
+This view is showing the downtown track on the left and the uptown track on the right. Each white dot represents a train, and the time between each train is represented as the colored dots. Downtown trains snake toward the lower left, and uptown trains snake toward the upper right.
+
 ## Installation
 
 **Hardware:**
