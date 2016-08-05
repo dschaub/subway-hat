@@ -20,7 +20,7 @@ module Layout
         if minutes < 0
           pixels
         else
-          relative_arrival = minutes - (pixels.length - i + 1)
+          relative_arrival = minutes - (pixels.length - i)
           relative_arrival.times { pixels << (i % 2 == 0 ? RED : YELLOW) } if relative_arrival > 0
           pixels << WHITE
         end
