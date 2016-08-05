@@ -10,6 +10,8 @@ class Options
   def parse!
     options = {}
     options[:driver] = Driver::UnicornHat
+    options[:rotation] = 180
+    options[:brightness] = 10
 
     parser = OptionParser.new do |config|
       config.banner = "Usage: clock.rb -s STOP_ID [-t]"
@@ -21,6 +23,14 @@ class Options
 
       config.on('-t', '--test', 'Test mode') do |test|
         options[:driver] = Driver::Terminal
+      end
+
+      config.on('-r', '--rotation ROTATION', 'Grid rotation') do |rot|
+        options[:rotation] = rot.to_i
+      end
+
+      config.on('-b', '--brightness BRIGHTNESS', 'Grid brightness') do |bri|
+        options[:brightness] = bri.to_i
       end
     end
 
