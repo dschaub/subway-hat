@@ -28,10 +28,10 @@ I haven't packaged this up as a legit gem with dependencies yet, so until then:
 1. `sudo apt-get install -y protobuf`
 1. `gem install protobuf ws2812`
 1. Run it!
-    1. The short version: `./on STOP_ID`
-    1. The long version: `rbenv sudo MTA_API_KEY=$MTA_API_KEY ruby clock.rb --stop STOP_ID --test --rotation [ROTATION] --brightness [BRIGHTNESS]` (or see options.rb)
+    1. The short version: `./on STATION_ID`
+    1. The long version: `rbenv sudo MTA_API_KEY=$MTA_API_KEY ruby clock.rb --stop STOP_ID --station STATION_ID --test --rotation [ROTATION] --brightness [BRIGHTNESS]` (or see options.rb)
 
-`STOP_ID` is the GTFS Stop ID. I'll add an easy reference for those at some point, but for now, you'll have to download the MTA's static schedule information. It's over at the [MTA developer site](http://web.mta.info/developers/developer-data-terms.html) -- scroll to the bottom and accept the agreement, then download the "New York City Transit Subway" ZIP file. stops.txt will have all of the Stop IDs mapped to their common names.
+`STATION_ID` is the GTFS Stop ID of a station with a northbound and southbound stop. I'll add an easy reference for those at some point, but for now, you'll have to download the MTA's static schedule information. It's over at the [MTA developer site](http://web.mta.info/developers/developer-data-terms.html) -- scroll to the bottom and accept the agreement, then download the "New York City Transit Subway" ZIP file. stops.txt will have all of the Stop IDs mapped to their common names.
 
 ## Really obvious disclaimer
 
