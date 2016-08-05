@@ -6,6 +6,7 @@ class DisplayManager
   COLS = 8
 
   RED = [0xEE, 0x35, 0x2E]
+  ORANGE = [0xFF, 0x63, 0x19]
   WHITE = [0xFF, 0xFF, 0xFF]
   OFF = [0, 0, 0]
   ERROR = [0, 0, 0x66]
@@ -75,14 +76,16 @@ class DisplayManager
       @x = 0
       @y = 0
       @showing_minutes = 0
+      @num_trains = 0
       @train_pixels = []
     end
 
     def add_arrival_in(minutes)
       relative_arrival = minutes - @showing_minutes
-      relative_arrival.times { @train_pixels << RED } if relative_arrival > 0
+      relative_arrival.times { @train_pixels << @num_trains % 2 == 0 ? RED : ORANGE } if relative_arrival > 0
       @train_pixels << WHITE
       @showing_minutes += relative_arrival
+      @num_trains += 1
     end
 
     def to_grid
