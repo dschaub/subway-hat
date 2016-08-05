@@ -26,15 +26,15 @@ class ArrivalTimeFinder
       .sort_by { |u| u.arrival.time }
   end
 
-  def feed
-    FeedFetcher.instance.fetch
+  def stop_time_updates
+    trip_updates.map(&:stop_time_update).flatten
   end
 
   def trip_updates
     feed.entity.map { |e| e.trip_update }.compact
   end
 
-  def stop_time_updates
-    trip_updates.map(&:stop_time_update).flatten
+  def feed
+    FeedFetcher.instance.fetch
   end
 end
