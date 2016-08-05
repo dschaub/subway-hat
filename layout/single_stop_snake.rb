@@ -1,15 +1,11 @@
+require './layout/base'
+
 module Layout
-  class SingleStopSnake
+  class SingleStopSnake < Base
     RED = [0xEE, 0x35, 0x2E]
     YELLOW = [0xFC, 0xCC, 0x0A]
     WHITE = [0xFF, 0xFF, 0xFF]
     OFF = [0, 0, 0]
-
-    def initialize(options)
-      @rows = options.delete(:rows)
-      @cols = options.delete(:cols)
-      @options = options
-    end
 
     def to_grid
       reset!

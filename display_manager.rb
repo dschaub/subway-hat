@@ -61,7 +61,7 @@ class DisplayManager
   end
 
   def layout
-    @layout ||= Layout::SingleStopSnake.new(@options.merge(rows: rows, cols: cols))
+    @layout ||= @options[:layout].new(@options.merge(rows: rows, cols: cols))
   end
 
   def _color(rgb)
