@@ -1,25 +1,43 @@
-class DisplayManager
-  attr_reader :display
-  delegate :clear, to: :display
+require './arrival_time_finder'
 
-  ROWS = 8
-  COLS = 8
+class DisplayManager
+  attr_reader :driver
+  delegate :rows, :cols, to: :driver
 
   RED = [0xEE, 0x35, 0x2E]
-  ORANGE = [0xFF, 0x63, 0x19]
+  YELLOW = [0xFC, 0xCC, 0x0A]
   WHITE = [0xFF, 0xFF, 0xFF]
   OFF = [0, 0, 0]
   ERROR = [0, 0, 0x66]
 
   def initialize(options = {})
-    @test = options[:test].nil? ? false : options[:test]
+    @driver = options[:driver].new
+    @stop_id = options[:stop_id]
 
-    display.rotation = options.delete(:rotation) || 180
-    display.brightness = options.delete(:brightness) || 10
+    @driver.rotation = options[:rotation] || 180
+    @driver.brightness = options[:brightness] || 10
+  end
+
+  def run!
+    loop do
+      now = Time.now
+
+      begin
+        show_times(finder.arrivals_within(30, now), now)
+      rescue FetchException
+        show_error
+      end
+
+      sleep 30
+    end
+  rescue Interrupt
+    puts 'Exiting!'
+  ensure
+    driver.clear
   end
 
   def show_times(times, now)
-    arranger = TrainArranger.new
+    arranger = TrainArranger.new(rows, cols)
 
     times.sort.each do |t|
       remaining = ((t - now) / 60).round
@@ -31,50 +49,44 @@ class DisplayManager
   end
 
   def show_grid(grid)
-    display.clear(false)
+    driver.clear(false)
 
     grid.each_with_index do |row, y|
       row.each_with_index do |color, x|
-        display[x, y] = _color(color)
+        driver[x, y] = _color(color)
       end
     end
 
-    display.show
+    driver.show
   end
 
   def show_error
-    display.clear(false)
-    display[0, 0] = _color(ERROR)
-    display[0, ROWS - 1] = _color(ERROR)
-    display[COLS - 1, 0] = _color(ERROR)
-    display[COLS - 1, ROWS - 1] = _color(ERROR)
-    display.show
+    driver.clear(false)
+    driver[0, 0] = _color(ERROR)
+    driver[0, rows - 1] = _color(ERROR)
+    driver[cols - 1, 0] = _color(ERROR)
+    driver[cols - 1, rows - 1] = _color(ERROR)
+    driver.show
   end
 
   private
 
-  def display
-    if @test
-      require './terminal_display'
-      @display ||= TerminalDisplay.new
-    else
-      require 'ws2812'
-      @display ||= Ws2812::UnicornHAT.new
-    end
+  def _color(rgb)
+    driver.get_color(*rgb)
   end
 
-  def _color(rgb)
-    if @test
-      TerminalDisplay::Color.new(*rgb)
-    else
-      Ws2812::Color.new(*rgb)
-    end
+  def finder
+    @finder ||= ArrivalTimeFinder.new(@stop_id)
   end
 
   class TrainArranger
-    def initialize
+    def initialize(rows, cols)
+      @rows = rows
+      @cols = cols
+
       @x = 0
       @y = 0
+
       @showing_minutes = 0
       @num_trains = 0
       @train_pixels = []
@@ -82,18 +94,18 @@ class DisplayManager
 
     def add_arrival_in(minutes)
       relative_arrival = minutes - @showing_minutes
-      relative_arrival.times { @train_pixels << @num_trains % 2 == 0 ? RED : ORANGE } if relative_arrival > 0
+      relative_arrival.times { @train_pixels << (@num_trains % 2 == 0 ? RED : YELLOW) } if relative_arrival > 0
       @train_pixels << WHITE
       @showing_minutes += relative_arrival
       @num_trains += 1
     end
 
     def to_grid
-      0.upto(ROWS * COLS - 1).reduce([]) do |memo, i|
+      0.upto(@rows * @cols - 1).reduce([]) do |memo, i|
         color = @train_pixels[i]
-        col = i % COLS
-        row = i / COLS
-        col = COLS - 1 - col if row % 2 == 1
+        col = i % @cols
+        row = i / @cols
+        col = @cols - 1 - col if row % 2 == 1
 
         memo[row] = [] unless memo[row]
         memo[row][col] = color || OFF

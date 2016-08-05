@@ -1,0 +1,2 @@
+#!/bin/bash
+rbenv sudo MTA_API_KEY=$MTA_API_KEY ruby clock.rb -s $1

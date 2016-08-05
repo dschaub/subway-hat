@@ -1,4 +1,6 @@
 require 'optparse'
+require './driver/unicorn_hat'
+require './driver/terminal'
 
 class Options
   def initialize(opts)
@@ -7,6 +9,7 @@ class Options
 
   def parse!
     options = {}
+    options[:driver] = Driver::UnicornHat
 
     parser = OptionParser.new do |config|
       config.banner = "Usage: clock.rb -s STOP_ID [-t]"
@@ -17,7 +20,7 @@ class Options
       end
 
       config.on('-t', '--test', 'Test mode') do |test|
-        options[:test] = test
+        options[:driver] = Driver::Terminal
       end
     end
 
