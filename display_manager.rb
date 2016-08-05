@@ -1,5 +1,5 @@
 require './arrival_time_finder'
-require './layout/snake'
+require './layout/single_stop_snake'
 
 class DisplayManager
   attr_reader :driver
@@ -7,12 +7,8 @@ class DisplayManager
 
   ERROR = [0, 0, 0x66]
 
-  def initialize(options = {})
-    @driver = options[:driver].new
-    @stop_id = options[:stop_id]
-
-    @driver.rotation = options[:rotation] || 180
-    @driver.brightness = options[:brightness] || 10
+  def initialize(options)
+    @options = options
   end
 
   def run!
@@ -54,8 +50,18 @@ class DisplayManager
 
   private
 
+  def driver
+    unless @driver
+      @driver = @options[:driver].new
+      @driver.rotation = @options[:rotation]
+      @driver.brightness = @options[:brightness]
+    end
+
+    @driver
+  end
+
   def layout
-    Layout::Snake.new(ArrivalTimeFinder.new(@stop_id), rows, cols)
+    @layout ||= Layout::SingleStopSnake.new(@options.merge(rows: rows, cols: cols))
   end
 
   def _color(rgb)
