@@ -17,11 +17,13 @@ module Layout
     def train_pixels
       @train_pixels ||= arrival_times.each_with_index.reduce([]) do |pixels, (time, i)|
         minutes = ((time - now) / 60).round
-        next if minutes < 0
-
-        relative_arrival = minutes - (pixels.length - i + 1)
-        relative_arrival.times { pixels << (i % 2 == 0 ? RED : YELLOW) } if relative_arrival > 0
-        pixels << WHITE
+        if minutes < 0
+          pixels
+        else
+          relative_arrival = minutes - (pixels.length - i + 1)
+          relative_arrival.times { pixels << (i % 2 == 0 ? RED : YELLOW) } if relative_arrival > 0
+          pixels << WHITE
+        end
       end
     end
 
